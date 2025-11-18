@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Mobile Cart</title>
+  <script>
+ function handleSubmit(){
+   alert("login to access to your cart");
+}
+</script>
+</head>
+
+<body class="bg-dark-50">
+
+  <section class="py-8">
+    <div class="container mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-4">Mobile Cart</h2>
+
+      <!-- Responsive Grid -->
+      <div class="mt-2 mb-3 p-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+        {{#each products}} 
+        <div class="bg-white h-auto rounded-2xl shadow-md overflow-hidden flex flex-col">
+
+          <!-- Product Image -->
+          <img src="{{this.image}}" alt="{{this.name}}"
+            class="w-80 h-38 object-cover" />
+
+          <div class="p-4 flex flex-col flex-grow">
+            <h3 class="text-lg font-semibold">{{this.name}}</h3>
+
+            <p class="text-gray-600 text-sm mt-1">
+              {{this.description}}
+            </p>
+
+            <p class="text-lg font-bold mt-2">
+              Rs. {{this.Price}}
+            </p>
+
+            <button onclick="handleSubmit()"
+              class="mt-auto bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+              Add To Cart
+            </button>
+          </div>
+
+        </div>
+        {{/each}}
+
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

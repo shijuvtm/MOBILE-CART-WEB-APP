@@ -1,0 +1,24 @@
+<div class="container mt-4">
+    <h2 class="text-center">All Users</h2>
+    <hr>
+
+    <table class="table table-bordered table-striped mt-3">
+        <thead class="thead-dark">
+            <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each users}}
+            <tr>
+                <td>{{this._id}}</td>
+                <td>{{this.Name}}</td>
+                <td>{{this.Email}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,69 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Signup</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+      <h2 class="text-2xl font-semibold text-center mb-6">Admin Signup</h2>
+      
+      <form action="/admin/adminSignup" method="POST" class="space-y-4">
+        <div>
+          <label for="Name" class="block text-sm font-medium text-gray-700">Full Name</label>
+          <input 
+            type="text" 
+            name="Name" 
+            placeholder="Enter your full name"
+            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+
+        <div>
+          <label for="Email" class="block text-sm font-medium text-gray-700">Email ID</label>
+          <input 
+            type="email" 
+            name="Email" 
+            placeholder="Enter your email"
+            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input 
+            type="password" 
+            name="password" 
+            placeholder="Create a password"
+            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+
+   
+
+        <button 
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+        >
+          Sign Up
+        </button>
+      </form>
+
+      <div class="mt-4 text-center">
+        <p class="text-sm text-gray-600">
+          Already have an account? 
+          <a href="/admin/adminLogin" class="text-blue-600 hover:text-blue-800 font-medium">
+            Login here
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
