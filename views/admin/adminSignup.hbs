@@ -19,7 +19,8 @@
           <input 
             type="text" 
             name="Name" 
-            placeholder="Enter your full name"
+            placeholder="full name"
+            required
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
         </div>
@@ -30,6 +31,7 @@
             type="email" 
             name="Email" 
             placeholder="Enter your email"
+            required
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
         </div>
@@ -40,11 +42,12 @@
             type="password" 
             name="password" 
             placeholder="Create a password"
+            required
             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
         </div>
 
-   
+        <p class="text-red-500 text-sm mt-2">All fields are required.</p>
 
         <button 
           type="submit"
@@ -66,4 +69,4 @@
   </div>
 
 </body>
-</html>
+  </html>
