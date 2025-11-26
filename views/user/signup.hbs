@@ -1,23 +1,72 @@
-<div class="row">
-    <div class="col-md-6 m-auto">
-        <div class="container mt-5 pl-5">
-            <h2 class="text-center">Create new Account</h2>
-            <form action="/signup" method="POST">
-                <div class="form-group">
-                    <label for="Name">Name</label>
-                    <input type="Name" class="form-control" name="Name" placeholder="Enter name">
-                </div>
-                <div class="form-group">
-                    <label for="Email Address">Email id</label>
-                    <input type="email" class="form-control" name="Email" placeholder="Enter Email id">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" class="form-control" name="password" placeholder="Password">
-                </div>
-                
-                <button type="submit" class="btn btn-primary float-right">Login</button>
-            </form>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Signup</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+      <h2 class="text-2xl font-semibold text-center mb-6">User Signup</h2>
+      
+      <form action="/Signup" method="POST" class="space-y-4">
+        <div>
+          <label for="Name" class="block text-sm font-medium text-gray-700">Full Name</label>
+          <input 
+            type="text" 
+            name="Name" 
+            placeholder="full name"
+            required
+            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
         </div>
+
+        <div>
+          <label for="Email" class="block text-sm font-medium text-gray-700">Email ID</label>
+          <input 
+            type="email" 
+            name="Email" 
+            placeholder="Enter your email"
+            required
+            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input 
+            type="password" 
+            name="password" 
+            placeholder="Create a password"
+            required
+            class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+
+        <p class="text-red-500 text-sm mt-2">All fields are required.</p>
+
+        <button 
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+        >
+          Sign Up
+        </button>
+      </form>
+
+      <div class="mt-4 text-center">
+        <p class="text-sm text-gray-600">
+          Already have an account? 
+          <a href="/login" class="text-blue-600 hover:text-blue-800 font-medium">
+            Login here
+          </a>
+        </p>
+      </div>
     </div>
-</div>
+  </div>
+
+</body>
+</html>
