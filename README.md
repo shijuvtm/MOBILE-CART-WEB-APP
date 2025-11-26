@@ -22,7 +22,7 @@
 
 8.Fully responsive UI for mobile devices
 
-**🛠️ Admin Side**
+**🛠️ Admin Side:**
 
 1.Admin login system
 
@@ -60,3 +60,38 @@
 
 ## Screenshot
 ![userSideview](Screenshots/Screenshot_2025-11-18-16-35-51-868_com.android.chrome.jpg) 
+
+![userCartview](Screenshots/Screenshot_2025-11-18-16-35-56-181_com.android.chrome.jpg) 
+
+## ⚙️ Installation and Setup
+### 🔧 Prerequisites
+- Node.js & npm installed
+- MongoDB running locally or using cloud (MongoDB Atlas)
+### 🏁 Set Up Project
+
+```bash
+git clone <repo-url>
+cd Mobile-Cart
+npm install
+```
+
+
+### Add .env file:
+```bash
+RAZORPAY_KEY_ID=your_key
+RAZORPAY_KEY_SECRET=your_secret
+MONGO_URL=mongodb://localhost:27017/mobile-cart
+```
+
+### ▶️ Run Server
+```bash  
+npm start
+```
+### Open in browser:
+👉 http://localhost:3000
+
+## 👨‍💻 Developer
+
+**Shiju A**
+ 📌 Full Stack Developer — MERN & Python
+
