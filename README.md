@@ -1,4 +1,5 @@
 # MOBILE CART WEB APP
+
 **Mobile Cart is a full-stack e-commerce platform where users can browse products, add items to their cart, place orders, and complete payments using Razorpay. The application includes a robust user authentication system, secure session management, and order history tracking.**
 
 **Admins can manage the entire store through an Admin Dashboard—including adding products, editing details, uploading images, managing users, and viewing orders. The backend is built with Node.js and Express, data is stored in MongoDB, and the frontend uses Handlebars for dynamic content rendering.**
@@ -70,8 +71,8 @@
 ### 🏁 Set Up Project
 
 ```bash
-git clone <repo-url>
-cd Mobile-Cart
+git clone https://github.com/shijuvtm/MOBILE-CART-WEB-APP.git
+cd Mobile-CART
 npm install
 ```
 
@@ -81,6 +82,7 @@ npm install
 RAZORPAY_KEY_ID=your_key
 RAZORPAY_KEY_SECRET=your_secret
 MONGO_URL=mongodb://localhost:27017/mobile-cart
+SESSION_KEY="ENTER YOUR KEY"
 ```
 
 ### ▶️ Run Server
@@ -93,5 +95,6 @@ npm start
 ## 👨‍💻 Developer
 
 **Shiju A**
+
  📌 Full Stack Developer — MERN & Python
 
