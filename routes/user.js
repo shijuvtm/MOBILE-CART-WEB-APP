@@ -152,19 +152,5 @@ router.get('/order-details/:id', async (req, res) => {
     console.log("Order details error:", error);
   }
 });
-// router.get('/order-success', verifylogin, (req, res) => {
-//     res.render('user/order-success', { user: req.session.user });
-//   });
-//   router.get('/order-details/:id', verifylogin, async (req, res) => {
-//     try {
-//       const orderId = req.params.id;
-//       const orderDetails = await userHelpers.getOrderDetails(orderId);
-//       const products = await userHelpers.getOrderProducts(orderId);
-//       res.render('user/order-details', { user: req.session.user, orderDetails, products });
-//     } catch (error) {
-//       console.error("Error fetching order details:", error);
-//       res.status(500).send("Internal Server Error");
-//     }
-//   });
 
 module.exports = router;
