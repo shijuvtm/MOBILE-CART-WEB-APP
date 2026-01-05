@@ -1,102 +1,120 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
-
-    <title>
-        Mobile Cart
-    </title>
-
-    <style>
-        body {
-            background: #f8f9fa;
-        }
-
-        .product-card {
-            border-radius: 12px;
-            overflow: hidden;
-            border: none;
-            transition: 0.3s ease;
-            background: #ffffff;
-            box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 14px;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: rgba(0, 0, 0, 0.2) 0px 6px 20px;
-        }
-
-        .product-img {
-            width: 100%;
-            height: 220px;
-            object-fit: contain;
-            background-color: #fff;
-            padding: 10px;
-        }
-
-        .price {
-            font-size: 1.1rem;
-            color: #e63946;
-            font-weight: bold;
-        }
-
-        .btn-add {
-            font-weight: 600;
-            border-radius: 25px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+  <title>Mobile Cart</title>
+  <style>
+    body { background: #f8f9fa; }
+    .product-card { border-radius: 12px; overflow: hidden; border: none; transition: 0.3s ease; background: #ffffff; box-shadow: rgba(0,0,0,0.1) 0px 4px 14px; }
+    .product-card:hover { transform: translateY(-5px); box-shadow: rgba(0,0,0,0.2) 0px 6px 20px; }
+    .product-img { width:100%; height:220px; object-fit:contain; background-color:#fff; padding:10px; }
+    .price { font-size:1.1rem; color:#e63946; font-weight:bold; }
+    .btn-add { font-weight:600; border-radius:25px; }
+    .modal-filter .modal-content { border-radius:1rem; }
+    .modal-filter .modal-header { border-bottom:none; }
+  </style>
 </head>
-
 <body>
+  <section>
+    <div class="container mt-4">
+      <h3 class="text-center mb-4 font-weight-bold">Available Products</h3>
 
-    <section>
-        <div class="container mt-4">
+      <!-- Filter Button with brands count badge -->
+      <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-info btn-lg px-4 font-weight-bold" data-toggle="modal" data-target="#filterModal">
+          <i class="fa fa-filter mr-2"></i>Filter
+          <span class="badge badge-light ml-2">{{brandsCount}}</span>
+        </button>
+      </div>
 
-            <h3 class="text-center mb-4 font-weight-bold">Available Products</h3>
-
-            <div class="row">
-
-                {{#each products}}
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-
-                    <div class="card product-card h-100">
-                        <img src="/public/product-images/{{this._id}}.jpg"
-                            class="product-img"
-                            alt="Product">
-
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{this.Name}}</h5>
-
-                            <p class="card-text text-muted" style="font-size: 0.9rem;">
-                                {{this.Description}}
-                            </p>
-
-                            <p class="price">₹{{this.Price}}</p>
-
-                            <button onclick="addToCart('{{this._id}}')"
-                                class="btn btn-primary mt-auto btn-add btn-block">
-                                Add To Cart
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-                {{/each}}
-
+      <div class="row">
+        {{#each products}}
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+          <div class="card product-card h-100">
+            <img src="/public/product-images/{{this._id}}.jpg" class="product-img" alt="Product">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{this.Name}}</h5>
+              <p class="card-text text-muted" style="font-size:0.9rem;">{{this.Description}}</p>
+              <p class="price">₹{{this.Price}}</p>
+              <button onclick="addToCart('{{this._id}}')" class="btn btn-primary mt-auto btn-add btn-block">Add To Cart</button>
             </div>
+          </div>
         </div>
-    </section>
+        {{/each}}
+      </div>
+    </div>
+  </section>
 
+  <!-- Filter Modal -->
+  <div class="modal fade modal-filter" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <form id="filterForm" method="get" action="/user/view-products">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title font-weight-bold" id="filterModalLabel"><i class="fa fa-filter mr-2"></i>Filter Products</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="brand">Brand</label>
+              <select class="form-control" id="brand" name="brand">
+                <option value="">All</option>
+                {{#if brands}}
+                  {{#each brands}}
+                    <option value="{{this}}">{{this}}</option>
+                  {{/each}}
+                {{else}}
+                  <option disabled>No brands available</option>
+                {{/if}}
+              </select>
+            </div>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+            <div class="form-group">
+              <label for="price">Price Range</label>
+              <select class="form-control" id="price" name="price">
+                <option value="">All</option>
+                <option value="0-10000">₹0 - ₹10,000</option>
+                <option value="10001-20000">₹10,001 - ₹20,000</option>
+                <option value="20001-30000">₹20,001 - ₹30,000</option>
+                <option value="30001-50000">₹30,001 - ₹50,000</option>
+                <option value="50001-100000">₹50,001 - ₹1,00,000</option>
+              </select>
+            </div>
+          </div>
 
+          <div class="modal-footer">
+            <a href="/user/view-products" class="btn btn-light">Clear</a>
+            <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success font-weight-bold">Apply Filter</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+
+  <script>
+    // Preselect brand and price after render
+    document.addEventListener('DOMContentLoaded', function () {
+      try {
+        var selectedBrand = "{{selectedBrand}}";
+        var selectedPrice = "{{selectedPrice}}";
+        if (selectedBrand && document.getElementById('brand')) {
+          document.getElementById('brand').value = selectedBrand;
+        }
+        if (selectedPrice && document.getElementById('price')) {
+          document.getElementById('price').value = selectedPrice;
+        }
+      } catch (e) {
+        console.error('Preselect error', e);
+      }
+    });
+  </script>
 </body>
-
 </html>
