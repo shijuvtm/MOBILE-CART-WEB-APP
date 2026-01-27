@@ -1,25 +1,59 @@
-<section>
-    <div class="container mt-4">
-        <div class="row">
-            <div class=""col-md-6>
-                <h2 class="text-center">Add Product</h2>
-                <form method="POST"  action="/admin/add-product" enctype="multipart/form-data">
-                    <label for="">Name</label>
-                    <input type="text" name="Name" class="form-control">
-                    <label for="">Category</label>
-                    <input type="text" name="Category" class="form-control">
-                    <label for="">Brand</label>
-                    <input type="text" name="brand" class="form-control">
-                    <label for="">Description</label>
-                    <input type="text" name="Description" class="form-control">
-                    <label for="">Price</label>
-                    <input type="number" name="Price" class="form-control">
-                    <label for="">Image</label>
-                    <input type="file" name="Image" class="form-control">
+<section style="background-color: #f1f3f6; min-height: 100vh; padding: 40px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm border-0" style="border-radius: 8px;">
+                    <div class="card-header bg-white py-3" style="border-bottom: 1px solid #f0f0f0;">
+                        <h5 class="mb-0" style="font-weight: 600; color: #212121;">Product Information</h5>
+                        <small class="text-muted">Fill in the details to list a new product</small>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <form method="POST" action="/admin/add-product" enctype="multipart/form-data">
+                            
+                            <div class="form-group mb-3">
+                                <label style="font-size: 14px; font-weight: 500; color: #878787;">Product Name</label>
+                                <input type="text" name="Name" class="form-control" placeholder="e.g. Apple iPhone 15 Pro" style="border-radius: 4px; padding: 10px;" required>
+                            </div>
 
-                    <button type="submit" class="btn btn-sucess mt-4 btn-primary">Submit</button>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label style="font-size: 14px; font-weight: 500; color: #878787;">Category</label>
+                                    <input type="text" name="Category" class="form-control" placeholder="Mobiles" style="border-radius: 4px; padding: 10px;">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label style="font-size: 14px; font-weight: 500; color: #878787;">Brand</label>
+                                    <input type="text" name="brand" class="form-control" placeholder="Apple" style="border-radius: 4px; padding: 10px;">
+                                </div>
+                            </div>
 
-                </form>
+                            <div class="form-group mb-3">
+                                <label style="font-size: 14px; font-weight: 500; color: #878787;">Description</label>
+                                <textarea name="Description" class="form-control" rows="3" placeholder="Enter product specifications..." style="border-radius: 4px; padding: 10px;"></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label style="font-size: 14px; font-weight: 500; color: #878787;">Price (₹)</label>
+                                    <input type="number" name="Price" class="form-control" placeholder="0.00" style="border-radius: 4px; padding: 10px;">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label style="font-size: 14px; font-weight: 500; color: #878787;">Product Image</label>
+                                    <input type="file" name="Image" class="form-control-file d-block" style="font-size: 13px; padding-top: 5px;">
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-block text-white" style="background-color: #2874f0; font-weight: 600; padding: 12px; border-radius: 2px; box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);">
+                                    SAVE PRODUCT
+                                </button>
+                                <a href="/admin" class="btn btn-link btn-block text-muted mt-2" style="font-size: 14px; text-decoration: none;">Cancel</a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</section>

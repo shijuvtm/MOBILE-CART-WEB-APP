@@ -27,25 +27,38 @@
 
                         <input type="radio" name="Payment" value="COD" >COD<br>
                         <input type="radio" name="Payment" value="ONLINE" > Online Payment<br>
-                        
+
                         <button type="submit" class="btn btn-primary mt-3">checkout</button>
                     </div>
 </section>
+
+ <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+
 <script>
-    $("#chechout-form").submit((e)=>{
+    // Initialize Cashfree
+    const cashfree = Cashfree({ mode: "sandbox" }); // Change to "production" for live
+
+    $("#checkout-form").submit((e) => {
         e.preventDefault();
         $.ajax({
             url: "/place-order",
             type: "POST",
-            data: $(this).serialize(),
-            success: (response)=>{
-                alert(response)
-                if(response.status == "success"){
-                    window.location.href = "/order-success"
-                    }else{
-                    alert("Something went wrong")
-            }
-            }
-        })
-    })
+            data: $('#checkout-form').serialize(),
+            success: (response) => {
+                if (response.payment_method === 'COD') {
+                    window.location.href = "/order-success";
+                } else {
+                    // 2. Launch Cashfree for Online Payment
+                    cashfree.checkout({
+                        paymentSessionId: response.payment_session_id,
+                        returnUrl: "http://localhost:3000/verify-payment?order_id=" + response.order_id
+                    });
+                }
+            },
+            error: () => alert("Something went wrong")
+        });
+    });
 </script>
+
+
+

@@ -51,5 +51,57 @@ module.exports={
             resolve()
         })
         })
+    },
+      getFilteredProducts: (filter) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let query = {};
+                
+                // 1. Filter by Brand
+                if (filter.brand) {
+                    query.brand = filter.brand;
+                }
+
+                // 2. Filter by Price Range
+                if (filter.price) {
+                    let range = filter.price.split('-');
+                    let min = parseInt(range[0]);
+                    let max = parseInt(range[1]);
+                    
+                    query.Price = { $gte: min };
+                    if (max) query.Price.$lte = max;
+                }
+
+                // 3. Setup Sorting
+                let sortOption = {};
+                if (filter.sort === 'asc') sortOption.Price = 1;
+                else if (filter.sort === 'desc') sortOption.Price = -1;
+
+                let products = await db.get()
+                    .collection(collection.PRODUCT_COLLECTION)
+                    .find(query)
+                    .sort(sortOption)
+                    .toArray();
+
+                resolve(products);
+            } catch (err) {
+                reject(err);
+            }
+        });
+    },
+
+    getAllBrands: () => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let brands = await db.get()
+                    .collection(collection.PRODUCT_COLLECTION)
+                    .distinct("brand");
+                let uniqueBrands=[...new Set(brands.map(brand => brand.trim()))];
+                resolve(uniqueBrands);
+            } catch (err) {
+                resolve([]);
+            }
+        });
     }
+
 }

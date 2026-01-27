@@ -75,74 +75,6 @@ router.get('/logout',(req,res)=>{
   res.redirect('/')
 })
 
-router.get('/view-products', async (req, res) => {
-  try {
-    const brand = req.query.brand || '';
-    const price = req.query.price || '';
-
-    const dbo = db.get();
-    if (!dbo) {
-      console.error('db.get() returned null - connection not established');
-      return res.status(500).send('Database connection not established');
-    }
-
-    // NOTE: collection name is 'product' (singular)
-    const collection = dbo.collection('product');
-
-    // Get distinct brand values (try common field names)
-    let brands = await collection.distinct('Brand').catch(() => []);
-    if (!brands || brands.length === 0) {
-      brands = await collection.distinct('brand').catch(() => []);
-    }
-    if (!brands || brands.length === 0) {
-      brands = await collection.distinct('Manufacturer').catch(() => []);
-    }
-    brands = Array.isArray(brands) ? Array.from(new Set(brands.filter(Boolean))).sort() : [];
-
-    // Build Mongo filter
-    const filter = {};
-    if (brand) {
-      // match either capitalized or lowercase field
-      filter.$or = [{ Brand: brand }, { brand: brand }];
-    }
-
-    if (price) {
-      const parts = price.split('-').map(Number);
-      if (parts.length === 2 && !Number.isNaN(parts[0]) && !Number.isNaN(parts[1])) {
-        filter.Price = { $gte: parts[0], $lte: parts[1] };
-      }
-    }
-
-    console.log('view-products filter:', JSON.stringify(filter), 'brands found:', brands.length);
-
-    const products = await collection.find(filter).toArray();
-
-    res.render('user/view-products', {
-      products,
-      brands,
-      selectedBrand: brand,
-      selectedPrice: price,
-      brandsCount: brands.length
-    });
-  } catch (err) {
-    console.error('Error in /user/view-products:', err);
-    res.status(500).send('Server error');
-  }
-});
-
-// Optional debug endpoint to check distinct Brand values quickly
-router.get('/debug-brands', async (req, res) => {
-  try {
-    const dbo = db.get();
-    if (!dbo) return res.json({ ok: false, message: 'db.get() returned null' });
-    const collection = dbo.collection('product');
-    const distinctBrand = await collection.distinct('Brand').catch(() => []);
-    res.json({ ok: true, collection: 'product', distinctBrand });
-  } catch (err) {
-    console.error('Error in /user/debug-brands:', err);
-    res.status(500).json({ ok: false, error: err.message });
-  }
-});
 router.get('/cart',verifylogin,async(req,res)=>{
   let products= await userHelpers.getcartProduct(req.session.user._id)
   let totalValue= await userHelpers.getTotalAmount(req.session.user._id)
@@ -221,5 +153,32 @@ router.get('/order-details/:id', async (req, res) => {
     console.log("Order details error:", error);
   }
 });
+// filter setting
+router.get('/view-products', async (req, res) => {
+    try {
+        let filterData = {
+            brand: req.query.brand || "",
+            price: req.query.price || "",
+            sort: req.query.sort || "" // Added sort functionality
+        };
 
+        // Fetch data in parallel for better performance
+        let [products, brands] = await Promise.all([
+            productHelpers.getFilteredProducts(filterData),
+            productHelpers.getAllBrands()
+        ]);
+
+        res.render('user/view-products', {
+            products,
+            brands,
+            brandsCount: brands.length,
+            selectedBrand: filterData.brand,
+            selectedPrice: filterData.price,
+            selectedSort: filterData.sort
+        });
+    } catch (err) {
+        console.error("Filter Error:", err);
+        res.status(500).send("Internal Server Error");
+    }
+});
 module.exports = router;
