@@ -14,12 +14,13 @@ module.exports={
             console.error("database insert error:",err);
         });
     },
-    getAllProducts:()=>{
-        return new Promise(async(resolve,reject)=>{
-            let products=await db.get().collection(collection.PRODUCT_COLLECTION).find().toArray()
-            resolve(products)
-        })
-    },
+    getAllProducts: async () => {
+  const database = await db.get(); // must be awaited
+  return database
+    .collection(collection.PRODUCT_COLLECTION)
+    .find()
+    .toArray();
+},
 
     deleteProduct:(proId)=>{
         return new Promise((resolve,reject)=>{
