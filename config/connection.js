@@ -6,7 +6,7 @@ const state={
 module.exports.connect=function(done){
     const url = process.env.MONGODB_URL;
     const dbname = process.env.DB_NAME;
-    mongoClient.connect(url,{useNewUrlParser:true,useUnifiedTopology:true}).then(client=>{
+    mongoClient.connect(url).then(client=>{
         state.db=client.db(dbname);
         console.log("database connected successfully");
         if(typeof done==='function')
