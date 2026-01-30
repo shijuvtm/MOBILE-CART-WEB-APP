@@ -12,7 +12,11 @@
   <div class="flex items-center justify-center min-h-screen">
     <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
       <h2 class="text-2xl font-semibold text-center mb-6">Admin Signup</h2>
-      
+      {{#if signupError}}
+<div class="bg-red-50 border border-red-500 text-red-700 px-4 py-3 rounded mb-4">
+  {{signupError}}
+</div>
+{{/if}}
       <form action="/admin/adminSignup" method="POST" class="space-y-4">
         <div>
           <label for="Name" class="block text-sm font-medium text-gray-700">Full Name</label>

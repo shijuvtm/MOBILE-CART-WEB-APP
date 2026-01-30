@@ -5,52 +5,60 @@ const { request,response } = require("../app");
 const { ObjectId } = require("mongodb");
 
 module.exports={
-   doadminSignup:(adminData)=>{
-     return new Promise(async (resolve,reject)=> {
-      try {
-        if(!adminData.password){
-           return reject(new Error("password is required"));
-       }
 
-     adminData.password = await bcrypt.hash(adminData.password,10);
-     
-     db.get().collection(collection.ADMIN_COLLECTION).insertOne(adminData).then((data)=>{
-     resolve(data.insertedId);
-     }).catch((err)=> reject(err));
-} catch (err) {
-  reject(err);
-}
-});
+doadminSignup: async (userData) => {
+  if (!userData.password) {
+    throw new Error("Password is required");
+  }
+
+  // normalize email
+  userData.Email = userData.Email.toLowerCase();
+
+  const existingAdmin = await db
+    .get()
+    .collection(collection.ADMIN_COLLECTION)
+    .findOne({ Email: userData.Email });
+
+  if (existingAdmin) {
+    throw new Error("Account already exists");
+  }
+
+  userData.password = await bcrypt.hash(userData.password, 10);
+
+  const adminData = {
+    Email: userData.Email,
+    password: userData.password,
+    role: 'admin',
+    createdAt: new Date()
+  };
+
+  const result = await db
+    .get()
+    .collection(collection.ADMIN_COLLECTION)
+    .insertOne(adminData);
+
+  return { status: true, admin: adminData, id: result.insertedId };
 },
-doadminLogin: (adminData) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      let admin = await db
-        .get()
-        .collection(collection.ADMIN_COLLECTION)
-        .findOne({ email: adminData.email });
-      
-      if (admin) {
-        const passwordMatch = await bcrypt.compare(adminData.password, admin.password);
-        if (passwordMatch) {
-          console.log("login success");
-          resolve({
-            admin: admin,
-            status: true
-          });
-        } else {
-          console.log("login failed - incorrect password");
-          resolve({ status: false });
-        }
-      } else {
-        console.log("login failed - admin not found");
-        resolve({ status: false });
-      }
-    } catch (error) {
-      console.log("login error:", error);
-      reject(error);
-    }
-  });
+doadminLogin: async (adminData) => {
+  const admin = await db
+    .get()
+    .collection(collection.ADMIN_COLLECTION)
+    .findOne({ Email: adminData.Email.toLowerCase() });
+
+  if (!admin) {
+    return { status: false };
+  }
+
+  const status = await bcrypt.compare(
+    adminData.password,
+    admin.password
+  );
+
+  if (status) {
+    return { status: true, admin };
+  } else {
+    return { status: false };
+  }
 },
 getAllUsers: () => {
   return new Promise(async (resolve, reject) => {

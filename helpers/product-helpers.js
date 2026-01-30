@@ -15,7 +15,11 @@ module.exports={
         });
     },
     getAllProducts: async () => {
+<<<<<<< HEAD
   const database = await db.get(); // must be awaited
+=======
+  const database = await db.get();
+>>>>>>> 6d55899 (Login update)
   return database
     .collection(collection.PRODUCT_COLLECTION)
     .find()

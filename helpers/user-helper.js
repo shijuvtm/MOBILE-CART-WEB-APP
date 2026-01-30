@@ -5,55 +5,123 @@ const { request, response } = require("../app");
 const { ObjectId } = require("mongodb");
 
 module.exports = {
-  doSignup: (userData) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (!userData.password) {
-          return reject(new Error("Password is required"));
+ doSignup: (userData) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!userData.password || !userData.Email) {
+        return reject(new Error("Email and password are required"));
+      }
+
+      const userCollection = db.get().collection(collection.USER_COLLECTION);
+
+      
+      const existingUser = await userCollection.findOne({
+        Email: userData.Email
+      });
+
+      if (existingUser) {
+        return reject({ message: "Account already exists" });
+      }
+
+      userData.password = await bcrypt.hash(userData.password, 10);
+      const userdata ={
+      Email:userData.Email,
+      password:userData.password,
+      role:'user',
+      createAt: new Date()
+      };
+      const result = await userCollection.insertOne(userdata);
+      resolve(result.insertedId);
+
+    } catch (err) {
+      reject(err);
+    }
+  });
+},
+doLogin: (userData) => {
+  return new Promise(async (resolve) => {
+    const user = await db
+      .get()
+      .collection(collection.USER_COLLECTION)
+      .findOne({ Email: userData.Email });
+
+    if (!user) {
+      return resolve({ status: false });
+    }
+
+    const status = await bcrypt.compare(userData.password, user.password);
+
+    if (status) {
+      resolve({ user, status: true });
+    } else {
+      resolve({ status: false });
+    }
+  });
+},
+  generateOTP: (Email) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // 1. Check if user exists
+      let user = await db.get().collection(collection.USER_COLLECTION).findOne({ Email: Email });
+      if (!user) return resolve({ status: false, message: "User not found" });
+
+      // 2. Generate 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // 3. Set Expiry (e.g., 5 minutes from now)
+      const expiry = new Date(Date.now() + 15 * 60000);
+
+      // 4. Update user record with OTP and Expiry
+      await db.get().collection(collection.USER_COLLECTION).updateOne(
+        { Email: Email },
+        { 
+          $set: { 
+            resetOTP: otp, // In production, hash this with bcrypt!
+            otpExpiry: expiry 
+          } 
         }
+      );
 
-        // Hash the password with salt rounds (10)
-        userData.password = await bcrypt.hash(userData.password, 10);
+      resolve({ status: true, otp: otp }); // Send OTP back to the route to email it
+    } catch (err) {
+      reject(err);
+    }
+  });
+},
+verifyAndResetPassword: (details) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let { Email, otp, newPassword } = details;
+      
+      // 1. Find user with matching Email and valid (non-expired) OTP
+      let user = await db.get().collection(collection.USER_COLLECTION).findOne({
+        Email: Email.trim(),
+        resetOTP: otp.trim(),
+        otpExpiry: { $gt: new Date() } // Checks if current time is less than expiry
+      });
 
-        db.get()
-          .collection(collection.USER_COLLECTION)
-          .insertOne(userData)
-          .then((data) => {
-            resolve(data.insertedId);
-          })
-          .catch((err) => reject(err));
-      } catch (err) {
-        reject(err);
-      }
-    });
-  },
-
-  doLogin: (userData) => {
-    return new Promise(async (resolve, request) => {
-      let loginStatus = false;
-      let response = {};
-      let user = await db
-        .get()
-        .collection(collection.USER_COLLECTION)
-        .findOne({ Email: userData.Email });
       if (user) {
-        bcrypt.compare(userData.password, user.password).then((status) => {
-          if (status) {
-            console.log("login success");
-            response.user = user;
-            response.status = true;
-            resolve(response);
-          } else {
-            console.log("login failed");
-            resolve({ status: false });
+        // 2. Hash the new password
+        let hashedNamePassword = await bcrypt.hash(newPassword, 10);
+
+        // 3. Update password and clear the OTP fields
+        await db.get().collection(collection.USER_COLLECTION).updateOne(
+          { Email: Email },
+          { 
+            $set: { password: hashedNamePassword },
+            $unset: { resetOTP: "", otpExpiry: "" } // Remove OTP fields after use
           }
-        });
+        );
+        resolve({ status: true });
       } else {
-        console.log("login failed");
-        resolve({ status: false });
+        resolve({ status: false, message: "Invalid or expired OTP" });
       }
-    });
-  },
+    } catch (err) {
+      reject(err);
+    }
+  });
+},
+
 
   addToCart: (proId, userId) => {
     let proObj = {

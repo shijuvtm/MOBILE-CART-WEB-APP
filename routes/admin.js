@@ -3,22 +3,51 @@ var router = express.Router();
 const adminHelper = require('../helpers/admin-helpers');
 var productHelper = require('../helpers/product-helpers');
 const productHelpers = require('../helpers/product-helpers');
+const jwt = require('jsonwebtoken');
 
-
-
+// Middleware: prefer session, otherwise verify JWT. Redirects to /admin/adminLogin on failure.
 function verifyAdminLogin(req, res, next) {
-  if (req.session && req.session.adminLoggedIn) {
+  if (req.session?.adminLoggedIn) {
+    return next();
+  }
+
+  try {
+    const authHeader = req.headers.authorization;
+    const token =
+      req.cookies?.token ||
+      (authHeader && authHeader.startsWith('Bearer ')
+        ? authHeader.split(' ')[1]
+        : null);
+
+    if (!token) {
+      return res.redirect('/admin/adminLogin');
+    }
+
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (payload.role !== 'admin') {
+      return res.redirect('/admin/adminLogin');
+    }
+
+    // Sync session
+    req.session.adminLoggedIn = true;
+    req.session.admin = payload;
+    req.admin = payload;
+
     next();
-  } else {
+  } catch (err) {
+    console.error('Admin JWT verify error:', err);
     res.redirect('/admin/adminLogin');
   }
 }
-
 /* GET users listing. */
 router.get('/', verifyAdminLogin, function(req, res, next) {
   productHelpers.getAllProducts().then((products)=>{
     console.log(products)
     res.render('admin/view-products',{admin:true,products})
+  }).catch(err => {
+    console.error('Error fetching products:', err);
+    next(err);
   });
 });
 
@@ -26,34 +55,67 @@ router.get('/adminSignup',(req,res) => {
   res.render('admin/adminSignup');
 });
 
-router.post('/adminSignup', (req,res) => {
-  adminHelper.doadminSignup(req.body).then((response)=>{
-    console.log(response);
-    res.redirect('/admin/adminLogin');
-  });
+router.post('/adminSignup', (req, res) => {
+  adminHelper.doadminSignup(req.body)
+    .then(() => {
+      res.redirect('/admin/adminLogin');
+    })
+    .catch(err => {
+      console.error('Signup error:', err);
+      res.render('admin/adminSignup', {
+        signupError: err.message || 'Something went wrong',
+        formData: req.body
+      });
+    });
 });
 
 router.get('/adminLogin',(req,res)=>{
   res.render('admin/adminLogin');
 });
+router.post('/adminLogin', async (req, res) => {
+  try {
+    const response1 = await adminHelper.doadminLogin(req.body);
 
-router.post('/adminLogin', (req, res) => {
-  adminHelper.doadminLogin(req.body).then((response1) => {
-    if (response1.status) {
-      req.session.adminLoggedIn = true;
-      req.session.admin = response1.admin;
-      res.redirect('/admin/');
-    } else {
-      console.log("admin-error");
-      res.redirect('/admin/adminLogin');
+    if (!response1.status || !response1.admin) {
+      return res.render('admin/adminLogin', {
+        loginError: 'Invalid admin credentials'
+      });
     }
-  });
-});
 
-router.get('/logout',(req,res)=>{
-  req.session.adminLoggedIn = false;
-  req.session.admin = null;
-  res.redirect('/admin/adminLogin');
+    req.session.adminLoggedIn = true;
+    req.session.admin = response1.admin;
+
+    const token = jwt.sign(
+      {
+        id: response1.admin._id.toString(),
+        role: 'admin'
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '8h' }
+    );
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'lax'
+    });
+
+    res.redirect('/admin/');
+  } catch (err) {
+    console.error('Login error:', err);
+    res.render('admin/adminLogin', {
+      loginError: 'Something went wrong'
+    });
+  }
+});
+router.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Session destroy error:', err);
+    }
+
+    res.clearCookie('token'); // remove JWT
+    res.redirect('/admin/adminLogin');
+  });
 });
 
 router.get('/add-product', verifyAdminLogin, function(req,res) {
@@ -62,7 +124,7 @@ router.get('/add-product', verifyAdminLogin, function(req,res) {
 
 router.post('/add-product', verifyAdminLogin, (req, res) => {
   console.log(req.body);
-  console.log(req.files.Image);
+  console.log(req.files?.Image);
 
   productHelper.addProduct(req.body, (id) => {
     let image = req.files.Image;
@@ -86,13 +148,21 @@ router.get('/delete-product/:id', verifyAdminLogin, (req,res)=>{
   console.log(proId);
   productHelper.deleteProduct(proId).then((response)=>{
     res.redirect('/admin/');
+  }).catch(err => {
+    console.error('Delete product error:', err);
+    res.redirect('/admin/');
   });
 });
 
 router.get('/edit-product/:id', verifyAdminLogin, async(req,res)=>{
-  let product=await productHelpers.getProductsDetails(req.params.id);
-  console.log(product);
-  res.render('admin/edit-product',{product});
+  try {
+    let product=await productHelpers.getProductsDetails(req.params.id);
+    console.log(product);
+    res.render('admin/edit-product',{product});
+  } catch (err) {
+    console.error('Edit product fetch error:', err);
+    res.redirect('/admin/');
+  }
 });
 
 router.post('/edit-product/:id', verifyAdminLogin, (req,res)=>{
@@ -107,6 +177,9 @@ router.post('/edit-product/:id', verifyAdminLogin, (req,res)=>{
       image.mv(imagepath);
     }
     res.redirect('/admin/');
+  }).catch(err => {
+    console.error('Update product error:', err);
+    res.redirect('/admin/');
   });
 });
 
@@ -116,6 +189,7 @@ router.get('/all-users', verifyAdminLogin, async (req, res) => {
     res.render('admin/all-users', { users });
   } catch (error) {
     console.log("Error fetching users:", error);
+    res.redirect('/admin/');
   }
 });
 
@@ -125,6 +199,7 @@ router.get('/all-orders', verifyAdminLogin, async (req, res) => {
     res.render('admin/all-orders', { orders });
   } catch (error) {
     console.log("Error fetching orders:", error);
+    res.redirect('/admin/');
   }
 });
 
