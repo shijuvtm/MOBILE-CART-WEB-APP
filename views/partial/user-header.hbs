@@ -1,55 +1,78 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Mobile Store</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>MobileStore</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-    <style>
-        .main-header {
-            background-color: #2874f0; 
+<style>
+    .main-header {
+        background-color: #2874f0;
+    }
+
+    /* Hamburger size control */
+    .navbar-toggler {
+        padding: 4px 6px;
+        font-size: 18px;
+    }
+
+    /* Brand size control */
+    .navbar-brand {
+        font-size: 18px;
+        font-weight: 600;
+        margin-left: 6px;
+    }
+
+    /* Cart badge */
+    .cart-badge {
+        position: absolute;
+        top: -6px;
+        right: -8px;
+        font-size: 10px;
+        padding: 3px 5px;
+    }
+
+    /* Reduce side padding on mobile */
+    @media (max-width: 768px) {
+        .navbar {
+            padding-left: 8px;
+            padding-right: 8px;
         }
-        .cart-badge {
-            position: absolute;
-            top: -6px;
-            right: -8px;
-            font-size: 10px;
-        }
-    </style>
+    }
+</style>
 </head>
 
 <body>
 
 <header class="main-header">
-    <nav class="navbar navbar-expand-lg navbar-dark container">
-        
-        <!-- Hamburger -->
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <nav class="navbar navbar-dark navbar-expand-lg">
 
-        <!-- Logo -->
-        <a class="navbar-brand fw-bolder ms-2 mr-2" href="/">MobileStore</a>
+        <!-- Left: Hamburger + Logo -->
+        <div class="d-flex align-items-center">
 
-        <!-- Right Icons -->
+            <button class="navbar-toggler border-0" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <a class="navbar-brand mb-0" href="/">MobileStore</a>
+        </div>
+
+        <!-- Right: Cart + Account -->
         <div class="d-flex align-items-center ms-auto">
 
-            <!-- Cart -->
             <a href="/cart" class="text-white position-relative me-3">
-                <i class="bi bi-cart3 fs-4"></i>
-                <span class="badge bg-warning text-dark cart-badge" id="cart-count">
+                <i class="bi bi-cart3 fs-5"></i>
+                <span class="badge bg-warning text-dark cart-badge">
                     {{cartCount}}
                 </span>
             </a>
 
-            <!-- Account Dropdown -->
             <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle"
+                <button class="btn btn-sm btn-primary dropdown-toggle"
                     data-bs-toggle="dropdown">
                     {{#if user}}
                         {{user.Name}}
@@ -69,14 +92,13 @@
                     <li><a class="dropdown-item" href="/admin/adminLogin">Admin Login</a></li>
                 </ul>
             </div>
-
         </div>
 
-        <!-- Collapsible Menu -->
+        <!-- Collapsible menu -->
         <div class="collapse navbar-collapse" id="navbarMenu">
             <ul class="navbar-nav mt-3 mt-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link fw-bold text-white" href="/">Home</a>
+                    <a class="nav-link text-white" href="/">Home</a>
                 </li>
             </ul>
         </div>
@@ -84,9 +106,6 @@
     </nav>
 </header>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
-
-
 </body>
 </html>
