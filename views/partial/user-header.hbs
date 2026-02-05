@@ -1,45 +1,66 @@
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>Mobile Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
-    <title>Mobile Cart</title>
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        .main-header {
+            background-color: #2874f0; 
+        }
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            font-size: 10px;
+        }
+    </style>
 </head>
+
 <body>
-<header class="bg-dark">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark container">
-        <a class="navbar-brand text-white" href="/">Mobile Cart</a>
+
+<header class="main-header">
+    <nav class="navbar navbar-expand-lg navbar-dark container">
         
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02"
-            aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <!-- Hamburger -->
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="/cart">Cart 
-                        <span class="badge bg-success" id="cart-count">{{cartCount}}</span>
-                    </a>
-                </li>
-                {{#if user}}
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="/orders">Orders</a>
-                </li>
-                {{/if}}
-            </ul>
+        <!-- Logo -->
+        <a class="navbar-brand fw-bolder ms-2 mr-2" href="/">MobileStore</a>
 
+        <!-- Right Icons -->
+        <div class="d-flex align-items-center ms-auto">
+
+            <!-- Cart -->
+            <a href="/cart" class="text-white position-relative me-3">
+                <i class="bi bi-cart3 fs-4"></i>
+                <span class="badge bg-warning text-dark cart-badge" id="cart-count">
+                    {{cartCount}}
+                </span>
+            </a>
+
+            <!-- Account Dropdown -->
             <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle text-white" type="button" 
-                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" 
-                    style="padding-right:40px;padding-left:20px">
+                <button class="btn btn-primary dropdown-toggle"
+                    data-bs-toggle="dropdown">
                     {{#if user}}
                         {{user.Name}}
                     {{else}}
                         Account
                     {{/if}}
                 </button>
-                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton1">
+
+                <ul class="dropdown-menu dropdown-menu-end">
                     {{#if user}}
+                        <li><a class="dropdown-item" href="/orders">Orders</a></li>
                         <li><a class="dropdown-item" href="/logout">Logout</a></li>
                     {{else}}
                         <li><a class="dropdown-item" href="/login">User Login</a></li>
@@ -48,9 +69,24 @@
                     <li><a class="dropdown-item" href="/admin/adminLogin">Admin Login</a></li>
                 </ul>
             </div>
+
         </div>
+
+        <!-- Collapsible Menu -->
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <ul class="navbar-nav mt-3 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link fw-bold text-white" href="/">Home</a>
+                </li>
+            </ul>
+        </div>
+
     </nav>
 </header>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+
+
 </body>
 </html>
-
